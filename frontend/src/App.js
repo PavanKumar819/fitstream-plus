@@ -1,22 +1,27 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Workouts from './pages/Workouts';
 import Media from './pages/Media';
 import Profile from './pages/Profile';
+import Signup from './pages/Signup';
+import Login from './pages/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
-    <Router>
+    <>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/workouts" element={<Workouts />} />
-        <Route path="/media" element={<Media />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/workouts" element={<ProtectedRoute><Workouts /></ProtectedRoute>} />
+        <Route path="/media" element={<ProtectedRoute><Media /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
-    </Router>
+    </>
   );
 }
 
