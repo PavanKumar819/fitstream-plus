@@ -1,49 +1,41 @@
 import React from 'react';
+import { useAuth } from '../context/AuthContext';
 
-function Profile() {
+const Profile = () => {
+  const { user } = useAuth();
+
   return (
-    <section style={styles.section}>
-      <h1 style={styles.heading}>Your Profile</h1>
-      <div style={styles.profileBox}>
-        <p><strong>Name:</strong> John Doe</p>
-        <p><strong>Email:</strong> johndoe@example.com</p>
-        <p><strong>Goals:</strong> Weight Loss, Muscle Gain</p>
-        <button style={styles.button}>Edit Profile</button>
+    <div style={styles.container}>
+      <h2 style={styles.heading}>Welcome to Your Profile</h2>
+      <div style={styles.card}>
+        <p><strong>Username:</strong> {user?.username}</p>
+        <p><strong>Email:</strong> {user?.email}</p>
       </div>
-    </section>
+    </div>
   );
-}
+};
 
 const styles = {
-  section: {
-    padding: '40px',
-    backgroundColor: '#f9f9f9',
-    minHeight: '100vh',
+  container: {
+    maxWidth: '500px',
+    margin: '50px auto',
+    padding: '30px',
+    backgroundColor: '#f8f9fa',
+    borderRadius: '8px',
+    boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+    textAlign: 'center',
   },
   heading: {
-    fontSize: '2.5rem',
-    color: '#2c3e50',
-    textAlign: 'center',
-    marginBottom: '30px',
+    marginBottom: '20px',
+    color: '#333',
   },
-  profileBox: {
-    margin: '0 auto',
-    width: '300px',
-    padding: '20px',
+  card: {
+    fontSize: '18px',
+    lineHeight: '1.6',
     backgroundColor: '#fff',
-    borderRadius: '10px',
-    boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-    textAlign: 'left',
-    lineHeight: '1.8',
-  },
-  button: {
-    marginTop: '15px',
-    backgroundColor: '#61dafb',
-    color: '#fff',
-    padding: '10px 15px',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
+    padding: '20px',
+    borderRadius: '8px',
+    border: '1px solid #ddd',
   },
 };
 
