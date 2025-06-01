@@ -6,10 +6,9 @@ const Profile = () => {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.heading}>Welcome to Your Profile</h2>
       <div style={styles.card}>
-        <p><strong>Username:</strong> {user?.username}</p>
-        <p><strong>Email:</strong> {user?.email}</p>
+        <h2 style={styles.title}>👋 Welcome, {user?.name || "Guest"}!</h2>
+        <p style={styles.subtitle}>Email: {user?.email}</p>
       </div>
     </div>
   );
@@ -17,25 +16,29 @@ const Profile = () => {
 
 const styles = {
   container: {
-    maxWidth: '500px',
-    margin: '50px auto',
-    padding: '30px',
-    backgroundColor: '#f8f9fa',
-    borderRadius: '8px',
-    boxShadow: '0 0 10px rgba(0,0,0,0.1)',
-    textAlign: 'center',
-  },
-  heading: {
-    marginBottom: '20px',
-    color: '#333',
+    height: '100vh',
+    background: '#111',
+    color: '#fff',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontFamily: 'Segoe UI, sans-serif',
   },
   card: {
+    background: '#222',
+    padding: '40px',
+    borderRadius: '12px',
+    boxShadow: '0 0 15px rgba(0,0,0,0.5)',
+    textAlign: 'center',
+  },
+  title: {
+    fontSize: '24px',
+    marginBottom: '15px',
+    color: '#61dafb',
+  },
+  subtitle: {
     fontSize: '18px',
-    lineHeight: '1.6',
-    backgroundColor: '#fff',
-    padding: '20px',
-    borderRadius: '8px',
-    border: '1px solid #ddd',
+    color: '#ccc',
   },
 };
 

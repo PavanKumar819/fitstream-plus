@@ -8,20 +8,31 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = (e) => {
+
+    const handleLogin = async (e) => {
     e.preventDefault();
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const existingUser = users.find(u => u.email === email);
 
-    if (!existingUser) {
-      alert('User not found. Please sign up first.');
-    } else if (existingUser.password !== password) {
-      alert('Incorrect password!');
-    } else {
-      login(existingUser);
-      alert('Login successful!');
-      navigate('/profile');
+    try {
+      const response = await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        login(data.user); // Save user in context
+        alert('Login successful!');
+        navigate('/profile');
+      } else {
+        alert(data.message || 'Login failed!');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('Something went wrong!');
     }
   };
 
@@ -35,10 +46,16 @@ const Login = () => {
             type="email" placeholder="Email" value={email}
             onChange={(e) => setEmail(e.target.value)} required style={styles.input}
           />
-          <input
-            type="password" placeholder="Password" value={password}
-            onChange={(e) => setPassword(e.target.value)} required style={styles.input}
-          />
+          <div style={{ position: 'relative' }}>
+           <input type={showPassword ? 'text' : 'password'}
+            placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}
+            required style={{ ...styles.input, paddingRight: '40px' }}
+             />
+          <span onClick={() => setShowPassword(!showPassword)} style={styles.toggle} >
+           {showPassword ? '🙈' : '👁️'}
+         </span>
+          </div>
+
           <button type="submit" style={styles.button}>Login</button>
         </form>
         <p style={styles.switchText}>
@@ -101,7 +118,18 @@ const styles = {
     textDecoration: 'none',
     fontWeight: 'bold',
     marginLeft: '4px',
-  }
+  },
+  toggle: {
+  position: 'absolute',
+  right: '10px',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  cursor: 'pointer',
+  fontSize: '18px',
+  userSelect: 'none',
+  color: '#61dafb',
+}
+
 };
 
 export default Login;
