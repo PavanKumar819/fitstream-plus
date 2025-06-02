@@ -13,9 +13,10 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (userData) => {
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
-  };
+  setUser(userData);
+  localStorage.setItem('fitstream_user', JSON.stringify(userData));
+};
+
 
   const logout = () => {
     localStorage.removeItem('user');

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
   const { login } = useAuth();
@@ -10,31 +11,52 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-
-    const handleLogin = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
       const response = await fetch('http://localhost:5000/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password })
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        login(data.user); // Save user in context
+      if (!response.ok) {
+        alert(data.message || 'Login failed');
+      } else {
+        login(data.user);
         alert('Login successful!');
         navigate('/profile');
-      } else {
-        alert(data.message || 'Login failed!');
       }
     } catch (error) {
       console.error('Login error:', error);
-      alert('Something went wrong!');
+      alert('An error occurred. Please try again later.');
     }
   };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+  try {
+    const res = await fetch('http://localhost:5000/api/google-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: credentialResponse.credential })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      login(data.user);
+      alert('Google login successful!');
+      navigate('/profile');
+    } else {
+      alert(data.message || 'Google login failed!');
+    }
+  } catch (error) {
+    console.error('Google login error:', error);
+    alert('Something went wrong!');
+  }
+};
+
 
   return (
     <div style={styles.container}>
@@ -43,23 +65,43 @@ const Login = () => {
         <p style={styles.subtitle}>Login to continue to FitStream+</p>
         <form onSubmit={handleLogin} style={styles.form}>
           <input
-            type="email" placeholder="Email" value={email}
-            onChange={(e) => setEmail(e.target.value)} required style={styles.input}
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            style={styles.input}
           />
           <div style={{ position: 'relative' }}>
-           <input type={showPassword ? 'text' : 'password'}
-            placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}
-            required style={{ ...styles.input, paddingRight: '40px' }}
-             />
-          <span onClick={() => setShowPassword(!showPassword)} style={styles.toggle} >
-           {showPassword ? '🙈' : '👁️'}
-         </span>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{ ...styles.input, paddingRight: '40px' }}
+            />
+            <span
+              onClick={() => setShowPassword(!showPassword)}
+              style={styles.toggle}
+            >
+              {showPassword ? '🙈' : '👁️'}
+            </span>
           </div>
 
           <button type="submit" style={styles.button}>Login</button>
         </form>
+
+        <div style={{ margin: '20px 0', textAlign: 'center' }}>
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => alert('Google Sign-In Failed')}
+          />
+        </div>
+
         <p style={styles.switchText}>
-          Don’t have an account? <Link to="/signup" style={styles.link}>Sign up</Link>
+          Don’t have an account?
+          <Link to="/signup" style={styles.link}> Sign up</Link>
         </p>
       </div>
     </div>
@@ -87,9 +129,22 @@ const styles = {
     maxWidth: '400px',
     animation: 'fadeIn 1s ease-in-out',
   },
-  title: { fontSize: '28px', color: '#61dafb', marginBottom: '10px', textAlign: 'center' },
-  subtitle: { color: '#ccc', textAlign: 'center', marginBottom: '30px' },
-  form: { display: 'flex', flexDirection: 'column', gap: '15px' },
+  title: {
+    fontSize: '28px',
+    color: '#61dafb',
+    marginBottom: '10px',
+    textAlign: 'center',
+  },
+  subtitle: {
+    color: '#ccc',
+    textAlign: 'center',
+    marginBottom: '30px',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '15px',
+  },
   input: {
     padding: '10px 15px',
     borderRadius: '6px',
@@ -120,16 +175,15 @@ const styles = {
     marginLeft: '4px',
   },
   toggle: {
-  position: 'absolute',
-  right: '10px',
-  top: '50%',
-  transform: 'translateY(-50%)',
-  cursor: 'pointer',
-  fontSize: '18px',
-  userSelect: 'none',
-  color: '#61dafb',
-}
-
+    position: 'absolute',
+    right: '10px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    cursor: 'pointer',
+    fontSize: '18px',
+    userSelect: 'none',
+    color: '#61dafb',
+  },
 };
 
 export default Login;

@@ -10,28 +10,28 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSignup = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const response = await fetch('http://localhost:5000/api/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: username, email, password }),
-      });
+  try {
+    const response = await fetch('http://localhost:5000/api/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, email, password }),  // ✅ changed 'name' to 'username'
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (response.ok) {
-        alert('Signup successful! Please log in.');
-        navigate('/login');
-      } else {
-        alert(data.message || 'Signup failed!');
-      }
-    } catch (error) {
-      console.error('Signup error:', error);
-      alert('Something went wrong!');
+    if (response.ok) {
+      alert('Signup successful! Please log in.');
+      navigate('/login');
+    } else {
+      alert(data.message || 'Signup failed!');
     }
-  };
+  } catch (error) {
+    console.error('Signup error:', error);
+    alert('Something went wrong!');
+  }
+};
 
   return (
     <div style={styles.container}>
