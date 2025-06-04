@@ -1,24 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 function Workouts() {
+  const [level, setLevel] = useState('beginner');
+  const [workouts, setWorkouts] = useState([]);
+
+  useEffect(() => {
+    axios.get(`http://localhost:5000/api/workouts/${level}`)
+      .then(res => setWorkouts(res.data))
+      .catch(err => {
+        console.error("Failed to fetch workouts", err);
+        setWorkouts([]);
+      });
+  }, [level]);
+
   return (
     <section style={styles.section}>
       <h1 style={styles.heading}>Workout Programs</h1>
-      <p style={styles.text}>Choose from beginner to advanced workouts tailored just for you!</p>
-      <div style={styles.grid}>
-        <div style={styles.card}>
-          <h2>Cardio Blast</h2>
-          <p>Get your heart pumping with high-energy cardio routines.</p>
-        </div>
-        <div style={styles.card}>
-          <h2>Strength Training</h2>
-          <p>Build muscle and burn fat with guided strength exercises.</p>
-        </div>
-        <div style={styles.card}>
-          <h2>Yoga Flex</h2>
-          <p>Relax and stretch with calming yoga flows.</p>
-        </div>
+
+      <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+        <select value={level} onChange={(e) => setLevel(e.target.value)}>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
       </div>
+
+      {workouts.length > 0 ? (
+        <div style={styles.grid}>
+          {workouts.map((workout, index) => (
+            <div key={index} style={styles.card}>
+              <h2>{workout.title}</h2>
+              <p>{workout.duration}</p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p style={styles.text}>No workouts found.</p>
+      )}
     </section>
   );
 }
